@@ -69,11 +69,11 @@ def sorteio(update, context):
     for k,v in context.user_data.items():
         lst.append(k)
     random.shuffle(lst)
-    names.append(lst[0])
+    lst.append(lst[0])
     gift_dict = {}
-    for i in range(len(friends) - 1):
-            gift_dict[names[i]] = names[i+1]
-    return gift_dict
+    for i in range(len(context.user_data)):
+            gift_dict[lst[i]] = lst[i+1]
+    update.message.reply_text(gift_dict)
 # Create the Updater and pass it your bot's token.
 # Make sure to set use_context=True to use the new context based callbacks
 # Post version 12 this will no longer be necessary
