@@ -29,14 +29,12 @@ logger = logging.getLogger(__name__)
 START_TEXT = 'Bot para ajudar a sortear uma lista de amigos ocultos'
 HELP_TEXT = """
 Lista de comandos:
-/help - Apresenta esta lista
-/add - adiciona amigos ao sorteio
-/apagar - apaga toda a lista de amigos
-/sorteio - recebe nomes e entrega o resultado do sorteio
-/lista - apsenta todos os amigos ja colocados na lista
+/ajuda - Apresenta esta lista
+/add - Adiciona amigos ao sorteio
+/apagar - Remove um amigo da lista.
+/sorteio - Sorteia o amigo e envia o resultado para o email de cada um
+/lista - Apresenta todos os amigos ja colocados na lista de sorteio
 """
-
-amigos = []
 
 def start(update, context):
   """Send a message when the command /start is issued."""
@@ -48,7 +46,7 @@ def add(update, context):
     """Usage: /add friends name"""
     # We don't use context.args here, because the value may contain whitespaces
     value = update.message.text.partition(' ')[2]
-    lst = (value.split(" "))
+    lst = list(value.split(" "))
     key = lst[0]
     emailF = lst[1]
     regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -66,7 +64,7 @@ def lista(update, context):
     #key = context.args[0]
     # Load value and send it to the user
     #value = context.user_data.get(key, 'Not found')
-    lista = 'Aqui estao todos os amigos que participam do sorteio:\n '
+    lista = 'Aqui estao todos os amigos que participam do sorteio:\n'
     for i in context.user_data.items():
         lista += f'{i}\n'
     update.message.reply_text(lista)
@@ -83,10 +81,10 @@ def sorteio(update, context):
     for k in gift_dict:
         update.message.reply_text(f'{k} presenteia {gift_dict[k]}')
 def apagar(update, context):
-    if context.args[0] is None:
+    rem_friend = context.args[0]
+    if rem_friend is None:
         update.message.reply_text("Diga-me qual amigo deseja remover da lista de sorteio: /apagar amigo")
     else:
-        rem_friend = context.args[0]
         if rem_friend in context.user_data:
             del context.user_data[rem_friend]
             update.message.reply_text(rem_friend + " foi removido da lista de sorteio.")
@@ -121,7 +119,7 @@ def main():
 
   # On different commands - answer in Telegram
   dp.add_handler(CommandHandler("start", start))
-  dp.add_handler(CommandHandler("help", help))
+  dp.add_handler(CommandHandler("ajuda", help))
   dp.add_handler(CommandHandler("add", add))
   dp.add_handler(CommandHandler("lista", lista))
   dp.add_handler(CommandHandler("sorteio", sorteio))
