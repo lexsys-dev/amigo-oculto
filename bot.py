@@ -66,7 +66,7 @@ def lista(update, context):
     #key = context.args[0]
     # Load value and send it to the user
     #value = context.user_data.get(key, 'Not found')
-    lista = 'Aqui estao todos os amigos que participam do sorteio: '
+    lista = 'Aqui estao todos os amigos que participam do sorteio:\n '
     for i in context.user_data.items():
         lista += f'{i}\n'
     update.message.reply_text(lista)
@@ -81,7 +81,17 @@ def sorteio(update, context):
     for i in range(len(context.user_data)):
             gift_dict[lst[i]] = lst[i+1]
     for k in gift_dict:
-        update.message.reply_text(f'{k} presenteia {gift_dict[k]}')    
+        update.message.reply_text(f'{k} presenteia {gift_dict[k]}')
+def apagar(update, context):
+    if context.args[0] is None:
+        update.message.reply_text("Diga-me qual amigo deseja remover da lista de sorteio: /apagar amigo")
+    else:
+        rem_friend = context.args[0]
+        if rem_friend in context.user_data:
+            del context.user_data[rem_friend]
+            update.message.reply_text(rem_friend + " foi removido da lista de sorteio.")
+        else:
+            update.message.reply_text(rem_friend + " nao esta na lista.")
 # Create the Updater and pass it your bot's token.
 # Make sure to set use_context=True to use the new context based callbacks
 # Post version 12 this will no longer be necessary
@@ -115,6 +125,7 @@ def main():
   dp.add_handler(CommandHandler("add", add))
   dp.add_handler(CommandHandler("lista", lista))
   dp.add_handler(CommandHandler("sorteio", sorteio))
+  dp.add_handler(CommandHandler("apagar", apagar))
   dp.add_handler(CommandHandler('r', restart, filters=Filters.user(username='@lexsys')))
   # log all errors
   dp.add_error_handler(error)
