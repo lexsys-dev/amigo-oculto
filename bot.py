@@ -32,7 +32,7 @@ Lista de comandos:
 /ajuda - Apresenta esta lista
 /add - Adiciona amigos ao sorteio
 /apagar - Remove um amigo da lista.
-/sorteio - Sorteia o amigo e envia o resultado para o email de cada um
+/sorteio - Sorteia os amigo e informa os participantes
 /lista - Apresenta todos os amigos ja colocados na lista de sorteio
 """
 
@@ -56,20 +56,15 @@ def add(update, context):
         # Send the key to the user
         update.message.reply_text(key + " agora esta na lista de amigos para o sorteio.")
     else:
-        update.message.reply_text(emailF + " bota um email certo ai")
+        update.message.reply_text(emailF + "Este email parece-me incorreto, tente novamente.")
 
 def lista(update, context):
     """Usage: /lista uuid"""
-    # Seperate ID from command
-    #key = context.args[0]
-    # Load value and send it to the user
-    #value = context.user_data.get(key, 'Not found')
     lista = 'Aqui estao todos os amigos que participam do sorteio:\n'
     for i in context.user_data.items():
         lista += f'{i}\n'
     update.message.reply_text(lista)
-def sorteio(update, context):
-    """Usage: /sorteio uuid"""
+def rand_friends(update,context):
     lst = []
     for k,v in context.user_data.items():
         lst.append(k)
@@ -77,9 +72,26 @@ def sorteio(update, context):
     lst.append(lst[0])
     gift_dict = {}
     for i in range(len(context.user_data)):
-            gift_dict[lst[i]] = lst[i+1]
-    for k in gift_dict:
-        update.message.reply_text(f'{k} presenteia {gift_dict[k]}')
+        gift_dict[lst[i]] = lst[i+1]
+    return gift_dict
+def sorteio(update, context):
+    """Usage: /sorteio uuid"""
+    sorteados = rand_friends(update, context)
+    update.message.reply_text(f'Ok! Estes sao os particpantes do amigo oculto: ')
+    for k in sorteados:
+        update.message.reply_text(f'{sorteados[k]}\n')
+    update.message.reply_text('Para notificar a todos nesta lista basta me dar o seguinte comando: /enviar')
+
+def send_email(update, context):
+    """Send an email for each friend with results"""
+    dictF = rand_friends(update, context)
+    for k in dictF:
+        if k in context.user_data:
+            sender = 'AmigoBot'
+            recipient = context.user_data[k]
+            subject = "Seu amigo oculto foi escolhido."
+            body = f'{k} presenteia {dictF[k]}'
+            update.message.reply_text(body)
 def apagar(update, context):
     rem_friend = context.args[0]
     if rem_friend is None:
@@ -124,6 +136,7 @@ def main():
   dp.add_handler(CommandHandler("lista", lista))
   dp.add_handler(CommandHandler("sorteio", sorteio))
   dp.add_handler(CommandHandler("apagar", apagar))
+  dp.add_handler(CommandHandler("enviar", send_email))
   dp.add_handler(CommandHandler('r', restart, filters=Filters.user(username='@lexsys')))
   # log all errors
   dp.add_error_handler(error)
@@ -139,3 +152,4 @@ def main():
 
 if __name__ == '__main__':
   main()
+
