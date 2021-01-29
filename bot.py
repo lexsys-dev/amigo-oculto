@@ -51,10 +51,14 @@ def add(update, context):
     lst = (value.split(" "))
     key = lst[0]
     emailF = lst[1]
-    # Store value in dict user_data
-    context.user_data[key] = emailF
-    # Send the key to the user
-    update.message.reply_text(key + " agora esta na lista de amigos para o sorteio.")
+    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    if(re.search(regex,emailF)):
+        # Store value in dict user_data
+        context.user_data[key] = emailF
+        # Send the key to the user
+        update.message.reply_text(key + " agora esta na lista de amigos para o sorteio.")
+    else:
+        update.message.reply_text(emailF + " bota um email certo ai")
 
 def lista(update, context):
     """Usage: /lista uuid"""
@@ -62,7 +66,10 @@ def lista(update, context):
     #key = context.args[0]
     # Load value and send it to the user
     #value = context.user_data.get(key, 'Not found')
-    update.message.reply_text(context.user_data)
+    lista = 'Aqui estao todos os amigos que participam do sorteio: '
+    for i in context.user_data.items():
+        lista += f'{i}\n'
+    update.message.reply_text(lista)
 def sorteio(update, context):
     """Usage: /sorteio uuid"""
     lst = []
@@ -73,7 +80,8 @@ def sorteio(update, context):
     gift_dict = {}
     for i in range(len(context.user_data)):
             gift_dict[lst[i]] = lst[i+1]
-    update.message.reply_text(gift_dict)
+    for k in gift_dict:
+        update.message.reply_text(f'{k} presenteia {gift_dict[k]}')    
 # Create the Updater and pass it your bot's token.
 # Make sure to set use_context=True to use the new context based callbacks
 # Post version 12 this will no longer be necessary
