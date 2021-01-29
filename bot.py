@@ -12,6 +12,7 @@ import random
 import sys
 import string
 import requests
+import emails
 
 from uuid import uuid4
 from threading import Thread
@@ -91,7 +92,9 @@ def send_email(update, context):
             recipient = context.user_data[k]
             subject = "Seu amigo oculto foi escolhido."
             body = f'{k} presenteia {dictF[k]}'
-            update.message.reply_text(body)
+            message = emails.generate(sender, recipient, subject, body)
+            emails.send(message)
+
 def apagar(update, context):
     rem_friend = context.args[0]
     if rem_friend is None:
