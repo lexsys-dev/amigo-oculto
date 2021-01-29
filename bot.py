@@ -31,9 +31,9 @@ START_TEXT = 'Bot para ajudar a sortear uma lista de amigos ocultos'
 HELP_TEXT = """
 Lista de comandos:
 /ajuda - Apresenta esta lista
-/add - Adiciona amigos ao sorteio
-/apagar - Remove um amigo da lista.
-/sorteio - Sorteia os amigo e informa os participantes
+/add - Adiciona amigos ao sorteio. Ex.: /add joao joao@email.com
+/apagar - Remove um amigo da lista. Ex.: /apagar joao
+/sorteio - Realiza o sorteio e informa os participantes
 /lista - Apresenta todos os amigos ja colocados na lista de sorteio
 """
 
@@ -57,7 +57,7 @@ def add(update, context):
         # Send the key to the user
         update.message.reply_text(key + " agora esta na lista de amigos para o sorteio.")
     else:
-        update.message.reply_text(emailF + "Este email parece-me incorreto, tente novamente.")
+        update.message.reply_text(emailF + " Este email parece-me incorreto, tente novamente.")
 
 def lista(update, context):
     """Usage: /lista uuid"""
@@ -86,12 +86,17 @@ def sorteio(update, context):
 def send_email(update, context):
     """Send an email for each friend with results"""
     dictF = rand_friends(update, context)
+    chat_user_client = update.message.from_user.username
     for k in dictF:
         if k in context.user_data:
             sender = 'AmigoBot'
             recipient = context.user_data[k]
             subject = "Seu amigo oculto foi escolhido."
-            body = f'{k} presenteia {dictF[k]}'
+            body = f"""Ola {k}\n 
+            {chat_user_client} adicinou seu email ao grupo para participar do Amigo Oculto!\n
+            E o seu amigo secreto e {dictF[k]}\n
+            Por favor, nao responda a este email. Sou apenas um bot e nao sei dar maiores informacoes."""
+            update.message.reply_text(f'E-mail enviado a {k}')
             message = emails.generate(sender, recipient, subject, body)
             emails.send(message)
 
