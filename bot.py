@@ -27,7 +27,8 @@ logger = logging.getLogger(__name__)
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
-START_TEXT = 'Bot para ajudar a sortear uma lista de amigos ocultos'
+START_TEXT = """Para comecar voce pode adicionar um amigo a sua lista de sorteio 
+eviando-me o comando /add amigo amigo@email.com ou se precisar de ajuda envie /ajuda""" 
 HELP_TEXT = """
 Lista de comandos:
 /ajuda - Apresenta esta lista
@@ -67,22 +68,27 @@ def lista(update, context):
     update.message.reply_text(lista)
 def rand_friends(update,context):
     lst = []
-    for k,v in context.user_data.items():
-        lst.append(k)
-    random.shuffle(lst)
-    lst.append(lst[0])
     gift_dict = {}
-    for i in range(len(context.user_data)):
-        gift_dict[lst[i]] = lst[i+1]
-    return gift_dict
+    try:
+        for k,v in context.user_data.items():
+            lst.append(k)
+        random.shuffle(lst)
+        lst.append(lst[0])
+        for i in range(len(context.user_data)):
+            gift_dict[lst[i]] = lst[i+1]
+        return gift_dict
+    except:
+        return gift_dict 
 def sorteio(update, context):
     """Usage: /sorteio uuid"""
     sorteados = rand_friends(update, context)
-    update.message.reply_text(f'Ok! Estes sao os particpantes do amigo oculto: ')
-    for k in sorteados:
-        update.message.reply_text(f'{sorteados[k]}\n')
-    update.message.reply_text('Para notificar a todos nesta lista basta me dar o seguinte comando: /enviar')
-
+    if bool(sorteados) is False:
+        update.message.reply_text('Voce nao adicionou nenhum amigo a sua lista. :(')
+    else:
+        update.message.reply_text(f'Ok! Estes sao os particpantes do amigo oculto: ')
+        for k in sorteados:
+            update.message.reply_text(f'{sorteados[k]}\n')
+        update.message.reply_text('Para notificar a todos nesta lista basta me dar o seguinte comando: /enviar')
 def send_email(update, context):
     """Send an email for each friend with results"""
     dictF = rand_friends(update, context)
@@ -92,10 +98,12 @@ def send_email(update, context):
             sender = 'AmigoBot'
             recipient = context.user_data[k]
             subject = "Seu amigo oculto foi escolhido."
-            body = f"""Ola {k}\n 
+            body = f"""Ola {k}\n
             {chat_user_client} adicinou seu email ao grupo para participar do Amigo Oculto!\n
             E o seu amigo secreto e {dictF[k]}\n
-            Por favor, nao responda a este email. Sou apenas um bot e nao sei dar maiores informacoes."""
+            \n
+            Por favor, nao responda a este email. Sou apenas um bot e nao sei dar maiores informacoes.\n
+            Voce tambem pode criar o proprio sorteio, basta falar comigo  aqui https://telegram.me/migsO_Ocultobot"""
             update.message.reply_text(f'E-mail enviado a {k}')
             message = emails.generate(sender, recipient, subject, body)
             emails.send(message)

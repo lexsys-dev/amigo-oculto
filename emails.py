@@ -16,8 +16,8 @@ def generate(sender, recipient, subject, body):
 
 def send(message):
     """Sends the message to the confidured SMTP server."""
-    gmail_user = 'vincenthimmel@gmail.com'
-    gmail_pwd = ')a-*%)-5~Q63FS['
+    gmail_user = 'migsoculto@gmail.com'
+    gmail_pwd = '85MMwx4npJ5hXg4'
     mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
     mail_server.login(gmail_user, gmail_pwd)
     mail_server.send_message(message)
