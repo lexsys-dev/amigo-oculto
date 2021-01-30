@@ -27,13 +27,13 @@ logger = logging.getLogger(__name__)
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
-START_TEXT = """Para comecar voce pode adicionar um amigo a sua lista de sorteio 
+START_TEXT = """Para comecar você pode adicionar um amigo a sua lista de sorteio 
 eviando-me o comando /add amigo amigo@email.com ou se precisar de ajuda envie /ajuda""" 
 HELP_TEXT = """
 Lista de comandos:
 /ajuda - Apresenta esta lista
-/add - Adiciona amigos ao sorteio. Ex.: /add joao joao@email.com
-/apagar - Remove um amigo da lista. Ex.: /apagar joao
+/add - Adiciona amigos ao sorteio. Ex.: /add amigo amigo@email.com
+/apagar - Remove um amigo da lista. Ex.: /apagar amigo
 /sorteio - Realiza o sorteio e informa os participantes
 /lista - Apresenta todos os amigos ja colocados na lista de sorteio
 """
@@ -56,13 +56,13 @@ def add(update, context):
         # Store value in dict user_data
         context.user_data[key] = emailF
         # Send the key to the user
-        update.message.reply_text(key + " agora esta na lista de amigos para o sorteio.")
+        update.message.reply_text(key + " agora está na lista de amigos para o sorteio.")
     else:
         update.message.reply_text(emailF + " Este email parece-me incorreto, tente novamente.")
 
 def lista(update, context):
     """Usage: /lista uuid"""
-    lista = 'Aqui estao todos os amigos que participam do sorteio:\n'
+    lista = 'Aqui estão todos os amigos que participam do sorteio:\n'
     for i in context.user_data.items():
         lista += f'{i}\n'
     update.message.reply_text(lista)
@@ -83,12 +83,12 @@ def sorteio(update, context):
     """Usage: /sorteio uuid"""
     sorteados = rand_friends(update, context)
     if bool(sorteados) is False:
-        update.message.reply_text('Voce nao adicionou nenhum amigo a sua lista. :(')
+        update.message.reply_text('Você não adicionou nenhum amigo a sua lista. :(')
     else:
-        update.message.reply_text(f'Ok! Estes sao os particpantes do amigo oculto: ')
+        update.message.reply_text(f'Ok! Estes são os particpantes do amigo oculto: ')
         for k in sorteados:
             update.message.reply_text(f'{sorteados[k]}\n')
-        update.message.reply_text('Para notificar a todos nesta lista basta me dar o seguinte comando: /enviar')
+        update.message.reply_text('Para enviar um email a todos os amigos basta me dar o seguinte comando: /enviar')
 def send_email(update, context):
     """Send an email for each friend with results"""
     dictF = rand_friends(update, context)
@@ -98,13 +98,14 @@ def send_email(update, context):
             sender = 'AmigoBot'
             recipient = context.user_data[k]
             subject = "Seu amigo oculto foi escolhido."
-            body = f"""Ola {k}\n
-            {chat_user_client} adicinou seu email ao grupo para participar do Amigo Oculto!\n
-            E o seu amigo secreto e {dictF[k]}\n
-            \n
-            Por favor, nao responda a este email. Sou apenas um bot e nao sei dar maiores informacoes.\n
-            Voce tambem pode criar o proprio sorteio, basta falar comigo  aqui https://telegram.me/migsO_Ocultobot"""
-            update.message.reply_text(f'E-mail enviado a {k}')
+            body = f"""Olá {k}\n
+            {chat_user_client} adicionou seu email ao grupo para participar do Amigo Oculto!\n
+            E o seu amigo secreto é: {dictF[k]}\n
+            
+            Por favor, não responda a este email. Sou apenas um bot e não sei dar maiores informações.\n
+            Você também pode criar o próprio sorteio, basta falar comigo aqui: https://telegram.me/migsO_Ocultobot\n
+            Se quiser falar mais sobre este sorteio pode enviar uma mensagem para https://telegram.me/{chat_user_client}"""
+            update.message.reply_text(f'E-mail enviado à {k}')
             message = emails.generate(sender, recipient, subject, body)
             emails.send(message)
 
@@ -117,7 +118,7 @@ def apagar(update, context):
             del context.user_data[rem_friend]
             update.message.reply_text(rem_friend + " foi removido da lista de sorteio.")
         else:
-            update.message.reply_text(rem_friend + " nao esta na lista.")
+            update.message.reply_text(rem_friend + " não está na lista de amigos. É mesmo este nome?")
 # Create the Updater and pass it your bot's token.
 # Make sure to set use_context=True to use the new context based callbacks
 # Post version 12 this will no longer be necessary
