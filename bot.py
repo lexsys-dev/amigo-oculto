@@ -62,10 +62,13 @@ def add(update, context):
 
 def lista(update, context):
     """Usage: /lista uuid"""
-    lista = 'Aqui estão todos os amigos que participam do sorteio:\n'
-    for i in context.user_data.items():
-        lista += f'{i}\n'
-    update.message.reply_text(lista)
+    if bool(context.user_data) is False:
+        update.message.reply_text("Ainda não há ninguém em sua lista, você pode adicionar alguém enviando-me o comando /add amigo amigo@example.com")
+    else:
+        lista = 'Aqui estão todos os amigos que participam do sorteio:\n'
+        for i in context.user_data.items():
+            lista += f'{i}\n'
+        update.message.reply_text(lista)
 def rand_friends(update,context):
     lst = []
     gift_dict = {}
@@ -93,27 +96,31 @@ def send_email(update, context):
     """Send an email for each friend with results and erase friends lista"""
     dictF = rand_friends(update, context)
     chat_user_client = update.message.from_user.username
-    for k in dictF:
-        if k in context.user_data:
-            sender = 'AmigoBot'
-            recipient = context.user_data[k]
-            subject = "Seu amigo oculto foi escolhido."
-            body = f"""Olá {k}\n
-            {chat_user_client} adicionou seu email ao grupo para participar do Amigo Oculto!\n
+    try:
+        for k in dictF:
+            if k in context.user_data:
+                sender = 'AmigoBot'
+                recipient = context.user_data[k]
+                subject = "Seu amigo oculto foi escolhido."
+                body = f"""Olá {k},\n
+                {chat_user_client} adicionou seu email ao grupo para participar do Amigo Oculto!\n
             
-            E o seu amigo secreto é: {dictF[k]}\n
+                E o seu amigo secreto é: {dictF[k]}\n
             
-            Por favor, não responda a este email. Sou apenas um bot e não sei dar maiores informações.
-            Você também pode criar o próprio sorteio, basta falar comigo aqui: https://telegram.me/migocultobot
-            Se quiser falar mais sobre este sorteio pode enviar uma mensagem para https://telegram.me/{chat_user_client}"""
-            update.message.reply_text(f'E-mail enviado à {k}')
-            message = emails.generate(sender, recipient, subject, body)
-            emails.send(message)
-            del context.user_data[k] 
-    update.message.reply_text("""Ok! Enviei um e-mail a todos, descubra quem irá presentear em sua caixa de emails.
-    Uma vez que o sorteio já foi realizado, agora vou limpar a sua /lista
-    Se precisar fazer um novo sorteio conte comigo.
-    Ah! Antes que me esqueça o meu e-mail é migsoculto@gmail.com""")
+                Por favor, não responda a este email. Sou apenas um bot e não sei dar maiores informações.
+                Você também pode criar o próprio sorteio, basta falar comigo aqui: https://telegram.me/migocultobot
+                Se quiser falar mais sobre este sorteio pode enviar uma mensagem para https://telegram.me/{chat_user_client}"""
+                update.message.reply_text(f'E-mail enviado à {k}')
+                message = emails.generate(sender, recipient, subject, body)
+                emails.send(message)
+                del context.user_data[k]
+        if bool(recipient) is True:
+            update.message.reply_text("""Ok! Enviei um e-mail a todos, descubra quem irá presentear em sua caixa de emails.
+Uma vez que o sorteio já foi realizado, agora vou limpar a sua /lista
+Se precisar fazer um novo sorteio conte comigo.
+Ah! Antes que me esqueça o meu e-mail é migsoculto@gmail.com""")
+    except:
+        update.message.reply_text("Não há e-mails à enviar, para adicionar participantes ao sorteio use o comando /add") 
 def apagar(update, context):
     rem_friend = context.args[0]
     if rem_friend is None:
