@@ -32,7 +32,7 @@ eviando-me o comando /add amigo amigo@email.com ou se precisar de ajuda envie /a
 HELP_TEXT = """
 Lista de comandos:
 /ajuda - Apresenta esta lista
-/add - Adiciona amigos ao sorteio. Ex.: /add amigo amigo@email.com
+/add - Adiciona amigos ao sorteio. Ex.: /add amigo amigo@example.com
 /apagar - Remove um amigo da lista. Ex.: /apagar amigo
 /sorteio - Realiza o sorteio e informa os participantes
 /lista - Apresenta todos os amigos ja colocados na lista de sorteio
@@ -45,7 +45,7 @@ def help(update, context):
   """Send a message when the command /help is issued."""
   update.message.reply_text(HELP_TEXT)
 def add(update, context):
-    """Usage: /add friends name"""
+    """Usage: /add friend friend@example.com"""
     # We don't use context.args here, because the value may contain whitespaces
     value = update.message.text.partition(' ')[2]
     lst = list(value.split(" "))
@@ -90,7 +90,7 @@ def sorteio(update, context):
             update.message.reply_text(f'{sorteados[k]}\n')
         update.message.reply_text('Para enviar um email a todos os amigos basta me dar o seguinte comando: /enviar')
 def send_email(update, context):
-    """Send an email for each friend with results"""
+    """Send an email for each friend with results and erase friends lista"""
     dictF = rand_friends(update, context)
     chat_user_client = update.message.from_user.username
     for k in dictF:
@@ -100,15 +100,20 @@ def send_email(update, context):
             subject = "Seu amigo oculto foi escolhido."
             body = f"""Olá {k}\n
             {chat_user_client} adicionou seu email ao grupo para participar do Amigo Oculto!\n
+            
             E o seu amigo secreto é: {dictF[k]}\n
             
-            Por favor, não responda a este email. Sou apenas um bot e não sei dar maiores informações.\n
-            Você também pode criar o próprio sorteio, basta falar comigo aqui: https://telegram.me/migsO_Ocultobot\n
+            Por favor, não responda a este email. Sou apenas um bot e não sei dar maiores informações.
+            Você também pode criar o próprio sorteio, basta falar comigo aqui: https://telegram.me/migocultobot
             Se quiser falar mais sobre este sorteio pode enviar uma mensagem para https://telegram.me/{chat_user_client}"""
             update.message.reply_text(f'E-mail enviado à {k}')
             message = emails.generate(sender, recipient, subject, body)
             emails.send(message)
-
+            del context.user_data[k] 
+    update.message.reply_text("""Ok! Enviei um e-mail a todos, descubra quem irá presentear em sua caixa de emails.
+    Uma vez que o sorteio já foi realizado, agora vou limpar a sua /lista
+    Se precisar fazer um novo sorteio conte comigo.
+    Ah! Antes que me esqueça o meu e-mail é migsoculto@gmail.com""")
 def apagar(update, context):
     rem_friend = context.args[0]
     if rem_friend is None:
@@ -122,7 +127,7 @@ def apagar(update, context):
 # Create the Updater and pass it your bot's token.
 # Make sure to set use_context=True to use the new context based callbacks
 # Post version 12 this will no longer be necessary
-updater = Updater("1679932632:AAH01E9PBfHBKHYkkm2sLnr4gyYd23ET5Uo")
+updater = Updater("1630981196:AAGwTWkfsFz7oF_-tevmDys56RXk2PQnmJQ")
 
 def stop_and_restart():
   """Gracefully stop the Updater and replace the current process with a new one"""
