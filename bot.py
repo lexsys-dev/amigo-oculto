@@ -10,8 +10,6 @@ import logging
 import re
 import random
 import sys
-import string
-import requests
 import emails
 
 from uuid import uuid4
@@ -30,14 +28,18 @@ logger = logging.getLogger(__name__)
 START_TEXT = """Para comecar você pode adicionar um amigo a sua lista de sorteio 
 eviando-me o comando /add amigo amigo@email.com ou se precisar de ajuda envie /ajuda""" 
 HELP_TEXT = """
-Lista de comandos:
+Olá! Sou um bot criado para ajudá-lo a sortear um Amigo Oculto.
+Fui criado para incluir até mesmo os amigos que ainda não tem uma conta no Telegram,
+por isso vou precisar que me diga qual email seu amigo(a) utiliza,
+dessa forma vou poder lhes enviar o resultado.
+
+Aqui estão todos os comandos que posso executar:
 /ajuda - Apresenta esta lista
 /add - Adiciona amigos ao sorteio. Ex.: /add amigo amigo@example.com
 /apagar - Remove um amigo da lista. Ex.: /apagar amigo
 /sorteio - Realiza o sorteio e informa os participantes
 /lista - Apresenta todos os amigos ja colocados na lista de sorteio
 """
-
 def start(update, context):
   """Send a message when the command /start is issued."""
   update.message.reply_text(text = START_TEXT)
