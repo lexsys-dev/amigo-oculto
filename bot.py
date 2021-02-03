@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 # This program dedicated to the public domain under the CC0 license.
 
-"""Bot para sortear amigos e ajudar na troca de presentes entre si
+"""Bot para sortear amigos e ajudar na troca de presentes entre si.
+Utiliza emails para informar os resultados.
 """
 
 import os
@@ -13,7 +14,6 @@ import sys
 import emails
 
 from uuid import uuid4
-from threading import Thread
 from telegram import InlineQueryResultArticle, ParseMode, InputTextMessageContent, Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, CallbackContext
 from telegram.utils.helpers import escape_markdown
@@ -30,7 +30,7 @@ START_TEXT = """Para comecar você pode adicionar um amigo a sua lista de sortei
 eviando-me o comando /add amigo amigo@email.com ou se precisar de ajuda envie /ajuda""" 
 HELP_TEXT = """
 Olá! Sou um bot criado para ajudá-lo a sortear um Amigo Oculto.
-Fui criado para incluir até mesmo os amigos que ainda não tem uma conta no Telegram,
+Fui criado para incluir os amigos que ainda não tem uma conta no Telegram,
 por isso vou precisar que me diga qual email seu amigo(a) utiliza,
 dessa forma vou poder lhes enviar o resultado.
 
@@ -96,7 +96,7 @@ def sorteio(update, context):
             update.message.reply_text(f'{sorteados[k]}\n')
         update.message.reply_text('Para enviar um email a todos os amigos basta me dar o seguinte comando: /enviar')
 def send_email(update, context):
-    """Send an email for each friend with results and erase friends lista"""
+    """Send an email for each friend with results and erase friends list"""
     dictF = rand_friends(update, context)
     chat_user_client = update.message.from_user.username
     try:
@@ -138,7 +138,7 @@ def apagar(update, context):
 # Load configuration from config.ini
 
 cfg = ConfigParser()
-cfg.read("config.ini")
+cfg.read("config_mig.ini")
 token = cfg["BOT ACCESS"]["token"]
 
 # Create the Updater and pass it your bot's token.

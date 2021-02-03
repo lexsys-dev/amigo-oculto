@@ -7,7 +7,7 @@ from configparser import ConfigParser
 #Load configuration from config.ini
 
 cfg = ConfigParser()
-cfg.read("config.ini")
+cfg.read("config_mig.ini")
 userinfo = cfg["USERINFO"]
 serverinfo = cfg["SERVERCONFIG"]
 
