@@ -6,14 +6,17 @@ Criar um bot capaz de sortear um amigo oculto de forma mais simples, apenas um p
 
 # Como funciona:
 
-Um dos amigos inicia a conversa com o bot;
+Um dos amigos inicia a conversa com o bot
  
-Envia o nome e o email de cada amigo com o  comando `/add` amigo amigo@example.com;
-Em seguida executa o comando `/sorteio`;
+Envia o nome e o email de cada amigo com o  comando `/add` amigo amigo@example.com
 
-O bot informa quais são os nomes que foram incluidos na lista para sorteio;
+A qualquer momento é possível verificar todos os participantes e os respectivos emails com o comando `/lista`
+
+Em seguida executa o comando `/sorteio`
+
+O bot informa quais são os nomes que foram incluidos na lista para sorteio
  
-O usuário confirma se estão todos os amigos que deseja e em seguida executa o comando `/enviar`;
+O usuário confirma se estão todos os amigos que deseja e em seguida executa o comando `/enviar`
 
 Em caso de um particpante ter sido incluído incorretamente pode removê-lo com o comando `/apagar`+ nome
 
