@@ -2,6 +2,14 @@ import email.message
 import mimetypes
 import os.path
 import smtplib
+from configparser import ConfigParser
+
+#Load configuration from config.ini
+
+cfg = ConfigParser()
+cfg.read("config.ini")
+userinfo = cfg["USERINFO"]
+serverinfo = cfg["SERVERCONFIG"]
 
 def generate(sender, recipient, subject, body):
     """Creates an email with an attachement."""
@@ -16,9 +24,7 @@ def generate(sender, recipient, subject, body):
 
 def send(message):
     """Sends the message to the confidured SMTP server."""
-    gmail_user = 'migsoculto@gmail.com'
-    gmail_pwd = '85MMwx4npJ5hXg4'
-    mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    mail_server.login(gmail_user, gmail_pwd)
+    mail_server = smtplib.SMTP_SSL(serverinfo["smtp_server"], serverinfo["port"])
+    mail_server.login(userinfo["loginid"], userinfo["password"])
     mail_server.send_message(message)
     mail_server.quit()

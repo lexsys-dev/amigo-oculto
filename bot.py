@@ -18,9 +18,10 @@ from telegram import InlineQueryResultArticle, ParseMode, InputTextMessageConten
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, CallbackContext
 from telegram.utils.helpers import escape_markdown
 from bs4 import BeautifulSoup
+from configparser import ConfigParser
+
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-
 logger = logging.getLogger(__name__)
 
 # Define a few command handlers. These usually take the two arguments update and
@@ -133,10 +134,17 @@ def apagar(update, context):
             update.message.reply_text(rem_friend + " foi removido da lista de sorteio.")
         else:
             update.message.reply_text(rem_friend + " não está na lista de amigos. É mesmo este nome?")
+
+# Load configuration from config.ini
+
+cfg = ConfigParser()
+cfg.read("config.ini")
+token = cfg["BOT ACCESS"]["token"]
+
 # Create the Updater and pass it your bot's token.
 # Make sure to set use_context=True to use the new context based callbacks
 # Post version 12 this will no longer be necessary
-updater = Updater("1630981196:AAGwTWkfsFz7oF_-tevmDys56RXk2PQnmJQ")
+updater = Updater(token)
 
 def stop_and_restart():
   """Gracefully stop the Updater and replace the current process with a new one"""
