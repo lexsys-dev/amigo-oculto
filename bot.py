@@ -56,14 +56,17 @@ def add(update, context):
     key = lst[0]
     emailF = lst[1]
     regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if(re.search(regex,emailF)):
+    regname = '^[a-zA-Z]+$'
+    if(re.search(regname,key)):
+        if(re.search(regex,emailF)):
         # Store value in dict user_data
-        context.user_data[key] = emailF
-        # Send the key to the user
-        update.message.reply_text(key + " agora está na lista de amigos para o sorteio.")
+            context.user_data[key] = emailF
+        # Inform the user that a new participant has been added
+            update.message.reply_text(key + " agora está na lista de amigos para o sorteio.")
+        else:
+            update.message.reply_text(emailF + " Este email parece-me incorreto, tente novamente.")
     else:
-        update.message.reply_text(emailF + " Este email parece-me incorreto, tente novamente.")
-
+        update.message.reply_text("Algo não está certo, envie-me novamente o nome + email para que possa adicionar a /lista")
 def lista(update, context):
     """Usage: /lista uuid"""
     if bool(context.user_data) is False:
